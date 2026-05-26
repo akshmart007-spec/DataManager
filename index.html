@@ -1,0 +1,1311 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>N3GI INVETORY MANAGER</title>
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
+
+body{
+background:#0f172a;
+padding:10px;
+color:#fff;
+}
+
+/* ===== CONTAINER ===== */
+
+.container{
+width:100%;
+max-width:100%;
+margin:auto;
+background:#111827;
+border-radius:15px;
+padding:20px;
+box-shadow:0 0 25px rgba(0,0,0,0.4);
+}
+
+/* ===== TITLE ===== */
+
+h1{
+text-align:center;
+font-size:38px;
+margin-bottom:8px;
+}
+
+.subtitle{
+text-align:center;
+color:#94a3b8;
+margin-bottom:20px;
+font-size:16px;
+}
+
+/* ===== INPUT ===== */
+
+.input-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin-bottom:15px;
+}
+
+@media(max-width:900px){
+
+.input-grid{
+grid-template-columns:1fr;
+}
+
+}
+
+.card{
+background:#1e293b;
+padding:15px;
+border-radius:12px;
+}
+
+.card-title{
+font-size:18px;
+margin-bottom:10px;
+font-weight:bold;
+}
+
+textarea{
+width:100%;
+height:300px;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#0f172a;
+color:#fff;
+font-size:15px;
+outline:none;
+resize:vertical;
+}
+
+/* ===== BUTTONS ===== */
+
+.button-group{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:15px;
+}
+
+button{
+flex:1;
+padding:14px;
+font-size:15px;
+font-weight:bold;
+border:none;
+border-radius:10px;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+.generate-btn{
+background:#2563eb;
+color:#fff;
+}
+
+.clear-btn{
+background:#dc2626;
+color:#fff;
+}
+
+.download-btn{
+background:#16a34a;
+color:#fff;
+}
+
+.mode-btn{
+background:#7c3aed;
+color:#fff;
+}
+
+/* ===== DROPDOWN ===== */
+
+.dropdown{
+position:relative;
+flex:1;
+}
+
+.dropdown-content{
+display:none;
+position:absolute;
+top:55px;
+left:0;
+width:100%;
+background:#1e293b;
+border-radius:10px;
+overflow:hidden;
+z-index:999;
+}
+
+.dropdown-content button{
+width:100%;
+border-radius:0;
+background:#1e293b;
+color:#fff;
+border-bottom:1px solid #334155;
+}
+
+/* ===== MODE ===== */
+
+.mode-indicator{
+margin-top:15px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+color:#38bdf8;
+}
+
+/* ===== SUMMARY ===== */
+
+.summary{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:12px;
+margin-top:15px;
+}
+
+.summary-card{
+background:#0f172a;
+padding:14px;
+border-radius:12px;
+text-align:center;
+cursor:pointer;
+border:1px solid #334155;
+transition:0.3s;
+min-height:100px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+}
+
+.summary-card:hover{
+transform:translateY(-3px);
+background:#172554;
+}
+
+.summary-card div{
+font-size:15px;
+margin-bottom:6px;
+color:#cbd5e1;
+}
+
+.summary-card h2{
+font-size:28px;
+font-weight:bold;
+}
+
+/* ===== RESULT ===== */
+
+.result-box{
+margin-top:20px;
+background:#1e293b;
+padding:12px;
+border-radius:12px;
+}
+
+/* ===== TABLE ===== */
+
+.table-container{
+width:100%;
+overflow:auto;
+max-height:80vh;
+border:1px solid #334155;
+border-radius:12px;
+}
+
+/* ===== FULL SIZE TABLE ===== */
+
+table{
+width:100%;
+min-width:100%;
+border-collapse:separate;
+border-spacing:0;
+table-layout:auto;
+font-size:15px;
+background:#0f172a;
+}
+
+/* ===== FROZEN HEADER ===== */
+
+thead th{
+position:sticky;
+top:0;
+z-index:5;
+background:#1d4ed8;
+color:#fff;
+padding:14px;
+font-size:14px;
+text-transform:uppercase;
+border:1px solid #334155;
+white-space:nowrap;
+}
+
+/* ===== FROZEN SERIAL ===== */
+
+th:first-child,
+td:first-child{
+position:sticky;
+left:0;
+z-index:10;
+background:#0f172a;
+min-width:80px;
+font-weight:bold;
+box-shadow:2px 0 6px rgba(0,0,0,0.35);
+}
+
+/* ===== FROZEN FSN ===== */
+
+th:nth-child(2),
+td:nth-child(2){
+position:sticky;
+left:80px;
+z-index:9;
+background:#0f172a;
+min-width:160px;
+font-weight:bold;
+box-shadow:2px 0 6px rgba(0,0,0,0.35);
+}
+
+/* ===== CELLS ===== */
+
+td{
+padding:14px;
+text-align:center;
+border:1px solid #334155;
+font-size:15px;
+color:#e2e8f0;
+white-space:nowrap;
+}
+
+tr:hover td{
+background:#1e293b;
+}
+
+/* ===== DESCRIPTION ===== */
+
+td:nth-child(3),
+th:nth-child(3){
+min-width:300px;
+text-align:left;
+}
+
+/* ===== QTY ===== */
+
+td:nth-child(4),
+td:nth-child(5),
+td:nth-child(6),
+td:nth-child(7),
+td:nth-child(8){
+font-weight:bold;
+font-size:16px;
+}
+
+/* ===== STATUS ===== */
+
+.complete{
+color:#22c55e;
+font-weight:bold;
+}
+
+.pending{
+color:#ef4444;
+font-weight:bold;
+}
+
+.extra{
+color:#facc15;
+font-weight:bold;
+}
+
+/* ===== BARCODE ===== */
+
+svg{
+background:#fff;
+padding:4px;
+border-radius:6px;
+}
+
+/* ===== PDF BUTTON ===== */
+
+.pdf-btn{
+padding:6px 10px;
+border:none;
+border-radius:6px;
+background:#16a34a;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+font-size:12px;
+}
+
+/* ===== TOTAL ROW ===== */
+
+.total-row td{
+background:#172554;
+font-weight:bold;
+font-size:18px;
+color:#fff;
+}
+
+/* ===== DESKTOP ===== */
+
+@media(min-width:1200px){
+
+table{
+font-size:16px;
+}
+
+th,
+td{
+padding:16px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>N3GI INVETORY MANAGER</h1>
+
+<div class="subtitle">
+Professional Inventory Putaway & Barcode Management System
+</div>
+
+<!-- INPUT -->
+
+<div class="input-grid">
+
+<div class="card">
+
+<div class="card-title">
+F K STOCK-IN DATA
+</div>
+
+<textarea id="mainData"></textarea>
+
+</div>
+
+<div class="card">
+
+<div class="card-title">
+GRN DATA
+</div>
+
+<textarea id="compareData"></textarea>
+
+</div>
+
+</div>
+
+<!-- BUTTONS -->
+
+<div class="button-group">
+
+<button
+class="generate-btn"
+onclick="generateTable()"
+>
+Generate Table
+</button>
+
+<button
+class="clear-btn"
+onclick="clearAll()"
+>
+Clear Data
+</button>
+
+<div class="dropdown">
+
+<button
+class="download-btn"
+onclick="toggleDownloadMenu()"
+>
+Download ▼
+</button>
+
+<div
+class="dropdown-content"
+id="downloadMenu"
+>
+
+<button onclick="downloadTablePDF()">
+Table PDF
+</button>
+
+<button onclick="downloadCSV()">
+CSV FILE
+</button>
+
+<button onclick="downloadPutawayPDF()">
+PUTAWAY PDF
+</button>
+
+</div>
+
+</div>
+
+<div class="dropdown">
+
+<button
+class="mode-btn"
+onclick="toggleDropdown()"
+>
+Putaway Qty ▼
+</button>
+
+<div
+class="dropdown-content"
+id="dropdownMenu"
+>
+
+<button onclick="setMode('expected')">
+Expected Qty
+</button>
+
+<button onclick="setMode('received')">
+Received Qty
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="mode-indicator">
+
+Mode :
+<span id="currentMode">
+Expected Qty
+</span>
+
+</div>
+
+<!-- SUMMARY -->
+
+<div class="summary">
+
+<div
+class="summary-card"
+onclick="filterTable('all')"
+>
+<div>Total Items</div>
+<h2 id="totalItems">0</h2>
+</div>
+
+<div
+class="summary-card"
+onclick="showColumnData('expected')"
+>
+<div>Expected Qty</div>
+<h2 id="expectedTotal">0</h2>
+</div>
+
+<div
+class="summary-card"
+onclick="showColumnData('received')"
+>
+<div>Received Qty</div>
+<h2 id="receivedTotal">0</h2>
+</div>
+
+<div
+class="summary-card"
+onclick="showColumnData('damaged')"
+>
+<div>Damaged Qty</div>
+<h2 id="damagedTotal">0</h2>
+</div>
+
+<div
+class="summary-card"
+onclick="showColumnData('putaway')"
+>
+<div>Putaway Qty</div>
+<h2 id="putawayTotal">0</h2>
+</div>
+
+<div
+class="summary-card"
+onclick="showColumnData('remaining')"
+>
+<div>Remaining Qty</div>
+<h2 id="remainingTotal">0</h2>
+</div>
+
+<div
+class="summary-card"
+onclick="showColumnData('extra')"
+>
+<div>Extra Put</div>
+<h2 id="extraPutTotal">0</h2>
+</div>
+
+</div>
+
+<!-- RESULT -->
+
+<div class="result-box">
+
+<h2>Generated Result</h2>
+
+<div class="table-container">
+
+<table id="resultTable">
+
+<thead>
+
+<tr>
+
+<th>S.No</th>
+<th>FSN</th>
+<th>Description</th>
+<th>Expected Qty</th>
+<th>Received Qty</th>
+<th>Damaged Qty</th>
+<th>Putaway Qty</th>
+<th>Remaining Qty</th>
+<th>Status</th>
+<th>Barcode / PDF</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+</div>
+</div>
+</div>
+
+<script>
+
+let compareMode='expected';
+
+/* ===== DOWNLOAD MENU ===== */
+
+function toggleDownloadMenu(){
+
+const menu=document.getElementById('downloadMenu');
+
+menu.style.display=
+menu.style.display==='block'
+?'none'
+:'block';
+
+}
+
+/* ===== MODE MENU ===== */
+
+function toggleDropdown(){
+
+const menu=document.getElementById('dropdownMenu');
+
+menu.style.display=
+menu.style.display==='block'
+?'none'
+:'block';
+
+}
+
+/* ===== SET MODE ===== */
+
+function setMode(mode){
+
+compareMode=mode;
+
+document.getElementById('dropdownMenu').style.display='none';
+
+document.getElementById('currentMode').innerText=
+mode==='expected'
+?'Expected Qty'
+:'Received Qty';
+
+}
+
+/* ===== GENERATE TABLE ===== */
+
+function generateTable(){
+
+const mainData=
+document.getElementById('mainData')
+.value
+.trim();
+
+const compareData=
+document.getElementById('compareData')
+.value
+.trim();
+
+const tbody=
+document.getElementById('tableBody');
+
+tbody.innerHTML='';
+
+if(mainData===''){
+alert('Paste F K STOCK-IN DATA');
+return;
+}
+
+const compareMap={};
+
+/* ===== GRN DATA ===== */
+
+if(compareData!==''){
+
+const compareRows=
+compareData
+.split(/\r?\n/)
+.filter(r=>r.trim()!=='');
+
+if(compareRows.length>1){
+
+const headers=
+compareRows[0]
+.split(/\t+/)
+.map(h=>h.toLowerCase().trim());
+
+let fsnIndex=0;
+let qtyIndex=-1;
+
+headers.forEach((header,index)=>{
+
+if(header.includes('fsn')){
+fsnIndex=index;
+}
+
+if(
+header.includes('good qty') ||
+header.includes('putaway') ||
+header.includes('quantity') ||
+header==='qty'
+){
+qtyIndex=index;
+}
+
+});
+
+compareRows
+.slice(1)
+.forEach(row=>{
+
+const cols=row.split(/\t+/);
+
+const fsn=
+(cols[fsnIndex]||'')
+.trim();
+
+let qty=0;
+
+if(qtyIndex!==-1){
+
+qty=parseInt(
+(cols[qtyIndex]||'0')
+.replace(/[^0-9]/g,'')
+)||0;
+
+}
+
+if(fsn!==''){
+compareMap[fsn]=qty;
+}
+
+});
+
+}
+
+}
+
+/* ===== F K STOCK-IN DATA ===== */
+
+const rows=
+mainData
+.split(/\r?\n/)
+.filter(r=>r.trim()!=='');
+
+let total=0;
+
+let expectedTotal=0;
+let receivedTotal=0;
+let damagedTotal=0;
+let putawayTotal=0;
+let remainingTotal=0;
+let extraPutTotal=0;
+
+for(let i=1;i<rows.length;i++){
+
+const cols=
+rows[i]
+.split(/\t+/);
+
+if(cols.length<2) continue;
+
+const fsn=
+(cols[0]||'').trim();
+
+const description=
+(cols[1]||'').trim();
+
+const expected=
+parseInt(cols[2])||0;
+
+const received=
+parseInt(cols[3])||0;
+
+const damaged=
+parseInt(cols[4])||0;
+
+const putaway=
+parseInt(compareMap[fsn])||0;
+
+/* ===== COMPARE ===== */
+
+let baseQty=
+compareMode==='expected'
+?expected
+:received;
+
+const remaining=
+Math.abs(baseQty-putaway);
+
+/* ===== STATUS ===== */
+
+let status='';
+let statusClass='';
+
+if(putaway===baseQty){
+
+status='Complete';
+statusClass='complete';
+
+}
+else if(putaway<baseQty){
+
+status='Pending';
+statusClass='pending';
+
+}
+else{
+
+status='Extra';
+statusClass='extra';
+
+}
+
+/* ===== TOTALS ===== */
+
+total++;
+
+expectedTotal+=expected;
+receivedTotal+=received;
+damagedTotal+=damaged;
+putawayTotal+=putaway;
+remainingTotal+=remaining;
+
+if(putaway>baseQty){
+extraPutTotal+=(putaway-baseQty);
+}
+
+/* ===== ROW ===== */
+
+const tr=document.createElement('tr');
+
+tr.setAttribute('data-status',status);
+
+tr.innerHTML=`
+
+<td>${i}</td>
+
+<td>${fsn}</td>
+
+<td>${description}</td>
+
+<td>${expected}</td>
+
+<td>${received}</td>
+
+<td>${damaged}</td>
+
+<td>${putaway}</td>
+
+<td>${remaining}</td>
+
+<td class="${statusClass}">
+${status}
+</td>
+
+<td>
+
+<div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
+
+<svg id="barcode${i}"></svg>
+
+<button
+class="pdf-btn"
+onclick="downloadBarcodePDF('${fsn}','${description}','${putaway}')"
+>
+Download PDF
+</button>
+
+</div>
+
+</td>
+
+`;
+
+tbody.appendChild(tr);
+
+/* ===== BARCODE ===== */
+
+try{
+
+JsBarcode(
+`#barcode${i}`,
+fsn||'EMPTY',
+{
+format:'CODE128',
+lineColor:'#000',
+width:2,
+height:55,
+displayValue:true
+}
+);
+
+}catch(error){
+console.log(error);
+}
+
+}
+
+/* ===== TOTAL ROW ===== */
+
+const totalRow=document.createElement('tr');
+
+totalRow.classList.add('total-row');
+
+totalRow.innerHTML=`
+
+<td colspan="3">
+TOTAL
+</td>
+
+<td>${expectedTotal}</td>
+
+<td>${receivedTotal}</td>
+
+<td>${damagedTotal}</td>
+
+<td>${putawayTotal}</td>
+
+<td>${remainingTotal}</td>
+
+<td colspan="2">
+TOTAL SUMMARY
+</td>
+
+`;
+
+tbody.appendChild(totalRow);
+
+/* ===== DASHBOARD ===== */
+
+document.getElementById('totalItems').innerText=total;
+
+document.getElementById('expectedTotal').innerText=expectedTotal;
+
+document.getElementById('receivedTotal').innerText=receivedTotal;
+
+document.getElementById('damagedTotal').innerText=damagedTotal;
+
+document.getElementById('putawayTotal').innerText=putawayTotal;
+
+document.getElementById('remainingTotal').innerText=remainingTotal;
+
+document.getElementById('extraPutTotal').innerText=extraPutTotal;
+
+}
+
+/* ===== FILTER ===== */
+
+function filterTable(status){
+
+const rows=
+document.querySelectorAll('#tableBody tr');
+
+rows.forEach(row=>{
+
+if(status==='all'){
+row.style.display='';
+}
+else{
+
+row.style.display=
+row.getAttribute('data-status')===status
+?''
+:'none';
+
+}
+
+});
+
+}
+
+/* ===== COLUMN FILTER ===== */
+
+function showColumnData(type){
+
+const rows=
+document.querySelectorAll('#tableBody tr');
+
+rows.forEach(row=>{
+
+const cols=
+row.querySelectorAll('td');
+
+let expected=
+parseInt(cols[3]?.innerText)||0;
+
+let received=
+parseInt(cols[4]?.innerText)||0;
+
+let damaged=
+parseInt(cols[5]?.innerText)||0;
+
+let putaway=
+parseInt(cols[6]?.innerText)||0;
+
+let remaining=
+parseInt(cols[7]?.innerText)||0;
+
+row.style.display='';
+
+if(type==='expected' && expected<=0){
+row.style.display='none';
+}
+
+if(type==='received' && received<=0){
+row.style.display='none';
+}
+
+if(type==='damaged' && damaged<=0){
+row.style.display='none';
+}
+
+if(type==='putaway' && putaway<=0){
+row.style.display='none';
+}
+
+if(type==='remaining' && remaining<=0){
+row.style.display='none';
+}
+
+if(type==='extra' && putaway<=expected){
+row.style.display='none';
+}
+
+});
+
+}
+
+/* ===== BARCODE PDF ===== */
+
+async function downloadBarcodePDF(
+fsn,
+description,
+qty
+){
+
+const { jsPDF }=
+window.jspdf;
+
+const doc=
+new jsPDF({
+orientation:'portrait',
+unit:'mm',
+format:[50,40]
+});
+
+const canvas=
+document.createElement('canvas');
+
+JsBarcode(canvas,fsn,{
+format:'CODE128',
+width:2,
+height:40,
+displayValue:false,
+margin:0
+});
+
+const barcodeImage=
+canvas.toDataURL('image/png');
+
+doc.setFont('helvetica','bold');
+
+doc.setFontSize(8);
+
+const splitDescription=
+doc.splitTextToSize(description,42);
+
+doc.text(splitDescription,4,6);
+
+doc.addImage(
+barcodeImage,
+'PNG',
+4,
+14,
+42,
+12
+);
+
+doc.setFontSize(10);
+
+doc.text(fsn,4,30);
+
+doc.text('Qty: '+qty,4,36);
+
+doc.save(fsn+'.pdf');
+
+}
+
+/* ===== CLEAR ===== */
+
+function clearAll(){
+
+document.getElementById('mainData').value='';
+
+document.getElementById('compareData').value='';
+
+document.getElementById('tableBody').innerHTML='';
+
+document.getElementById('totalItems').innerText='0';
+
+document.getElementById('expectedTotal').innerText='0';
+
+document.getElementById('receivedTotal').innerText='0';
+
+document.getElementById('damagedTotal').innerText='0';
+
+document.getElementById('putawayTotal').innerText='0';
+
+document.getElementById('remainingTotal').innerText='0';
+
+document.getElementById('extraPutTotal').innerText='0';
+
+}
+
+/* ===== TABLE PDF ===== */
+
+async function downloadTablePDF(){
+
+const { jsPDF }=
+window.jspdf;
+
+const doc=
+new jsPDF('l','mm','a4');
+
+let y=10;
+
+const rows=
+document.querySelectorAll('#tableBody tr');
+
+rows.forEach(row=>{
+
+if(row.style.display==='none') return;
+
+const cols=
+row.querySelectorAll('td');
+
+const text=
+`FSN: ${cols[1].innerText} | Desc: ${cols[2].innerText} | Expected: ${cols[3].innerText} | Received: ${cols[4].innerText} | Putaway: ${cols[6].innerText} | Status: ${cols[8].innerText}`;
+
+if(y>190){
+
+doc.addPage();
+
+y=10;
+
+}
+
+doc.setFontSize(8);
+
+doc.text(text,10,y);
+
+y+=8;
+
+});
+
+doc.save('Table_Report.pdf');
+
+}
+
+/* ===== PUTAWAY PDF ===== */
+
+async function downloadPutawayPDF(){
+
+const { jsPDF }=
+window.jspdf;
+
+const doc=
+new jsPDF('p','mm','a4');
+
+let y=15;
+
+const rows=
+document.querySelectorAll('#tableBody tr');
+
+rows.forEach(row=>{
+
+if(row.style.display==='none') return;
+
+const cols=
+row.querySelectorAll('td');
+
+const fsn=
+cols[1].innerText;
+
+const desc=
+cols[2].innerText;
+
+const qty=
+cols[6].innerText;
+
+if(parseInt(qty)<=0) return;
+
+if(y>260){
+
+doc.addPage();
+
+y=15;
+
+}
+
+doc.setFontSize(11);
+
+doc.text(desc,10,y);
+
+const canvas=
+document.createElement('canvas');
+
+JsBarcode(canvas,fsn,{
+format:'CODE128',
+displayValue:false,
+width:2,
+height:40,
+margin:0
+});
+
+const img=
+canvas.toDataURL('image/png');
+
+doc.addImage(
+img,
+'PNG',
+10,
+y+8,
+70,
+18
+);
+
+doc.setFontSize(10);
+
+doc.text(fsn,10,y+32);
+
+doc.setFontSize(12);
+
+doc.text('QTY: '+qty,10,y+40);
+
+y+=55;
+
+});
+
+doc.save('Putaway_Qty_Report.pdf');
+
+}
+
+/* ===== CSV ===== */
+
+function downloadCSV(){
+
+const table=
+document.getElementById('resultTable');
+
+let csv=[];
+
+for(let row of table.rows){
+
+if(row.style.display==='none') continue;
+
+let cols=[];
+
+for(let cell of row.cells){
+
+cols.push(
+cell.innerText
+.replace(/,/g,' ')
+.replace(/\n/g,' ')
+);
+
+}
+
+csv.push(cols.join(','));
+
+}
+
+const csvFile=
+new Blob(
+[csv.join('\n')],
+{type:'text/csv'}
+);
+
+const downloadLink=
+document.createElement('a');
+
+downloadLink.download=
+'N3GI_Result.csv';
+
+downloadLink.href=
+window.URL.createObjectURL(csvFile);
+
+document.body.appendChild(downloadLink);
+
+downloadLink.click();
+
+document.body.removeChild(downloadLink);
+
+}
+
+</script>
+
+</body>
+</html>
