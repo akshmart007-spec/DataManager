@@ -3,45 +3,219 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>N3GI INVETORY MANAGER</title>
+  <title>N3GI FSN BARCODE GENERATOR</title>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
+  .login-overlay{
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,0.85);
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ z-index:99999;
+}
+
+.login-box{
+ width:350px;
+ background:rgba(255,255,255,0.08);
+ backdrop-filter:blur(15px);
+ border-radius:20px;
+ padding:30px;
+ text-align:center;
+ color:white;
+}
+
+.login-box input{
+ width:100%;
+ padding:12px;
+ border-radius:10px;
+ margin-bottom:15px;
+}
+
+.login-box button{
+ width:100%;
+ padding:12px;
+ border-radius:10px;
+}
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
-body{background:#0f172a;color:#fff;padding:15px}
-.container{background:#111827;padding:20px;border-radius:15px}
-h1{text-align:center;margin-bottom:10px}
-.subtitle{text-align:center;color:#94a3b8;margin-bottom:20px}
-.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-@media(max-width:800px){.input-grid{grid-template-columns:1fr}}
-.card{background:#1e293b;padding:15px;border-radius:12px}
-textarea{width:100%;height:250px;background:#0f172a;color:#fff;border:none;border-radius:10px;padding:10px}
-.button-group{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
-button{padding:12px 16px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
-.generate-btn{background:#2563eb;color:#fff}
-.clear-btn{background:#dc2626;color:#fff}
-.download-btn{background:#16a34a;color:#fff}
-.mode-btn{background:#7c3aed;color:#fff}
+
+body{
+ background-image:url('background.jpg');
+ background-size:cover;
+ background-position:center;
+ background-repeat:no-repeat;
+ background-attachment:fixed;
+
+ color:white;
+ padding:20px;
+}
+
+.container{
+max-width:1350px;
+margin:auto;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(12px);
+border-radius:18px;
+padding:20px;
+}
+
+h1{text-align:center}
+.subtitle{text-align:center;color:#94a3b8;margin-bottom:15px}
+
+.input-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
+@media(max-width:900px){
+.input-grid{grid-template-columns:1fr}
+}
+
+.card{
+background:rgba(255,255,255,0.07);
+padding:15px;
+border-radius:12px;
+}
+
+textarea{
+width:100%;
+height:260px;
+border:none;
+border-radius:10px;
+padding:10px;
+background:#0b1220;
+color:white;
+}
+
+.button-group{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:15px;
+}
+
+button{
+padding:12px 15px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.generate-btn{background:#2563eb;color:white}
+.clear-btn{background:#ef4444;color:white}
+.download-btn{background:#16a34a;color:white}
+.mode-btn{background:#7c3aed;color:white}
+
 .dropdown{position:relative}
-.dropdown-content{display:none;position:absolute;top:50px;left:0;background:#1e293b;border-radius:10px;overflow:hidden;z-index:999;width:180px}
-.dropdown-content button{width:100%;border-radius:0;background:#1e293b;color:#fff;border-bottom:1px solid #334155}
-.mode-indicator{text-align:center;margin-top:15px;color:#38bdf8;font-weight:bold}
-.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:20px}
-.summary-card{background:#0f172a;padding:15px;border-radius:12px;text-align:center;cursor:pointer;border:2px solid transparent}
-.summary-active{border-color:#38bdf8;box-shadow:0 0 10px #38bdf8}
-.table-container{overflow:auto;margin-top:20px}
-table{width:100%;border-collapse:collapse;background:#0f172a}
-th,td{border:1px solid #334155;padding:10px;text-align:center}
-th{background:#1d4ed8}
-.complete{color:#22c55e;font-weight:bold}
-.pending{color:#fb923c;font-weight:bold}
-.extra{color:#facc15;font-weight:bold}
-.short-status{color:#facc15;font-weight:bold}
-.damage-status{color:#ef4444;font-weight:bold}
-.total-row td{background:#172554;font-weight:bold}
-svg{background:#fff;padding:4px;border-radius:5px}
-.barcode-popup{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:9999}
-.popup-box{background:#fff;padding:20px;border-radius:15px;text-align:center}
+
+.dropdown-content{
+display:none;
+position:absolute;
+top:45px;
+left:0;
+background:#1e293b;
+border-radius:10px;
+width:200px;
+z-index:999;
+border:1px solid #334155;
+overflow:hidden;
+}
+
+.dropdown-content button{
+width:100%;
+background:transparent;
+color:white;
+border-bottom:1px solid #334155;
+border-radius:0;
+}
+
+.mode-indicator{
+text-align:center;
+margin-top:15px;
+color:#38bdf8;
+font-weight:bold;
+}
+
+.summary{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+gap:10px;
+margin-top:20px;
+}
+
+.summary-card{
+background:rgba(255,255,255,0.06);
+padding:12px;
+border-radius:10px;
+text-align:center;
+cursor:pointer;
+}
+
+.summary-active{
+box-shadow:0 0 10px #38bdf8;
+border:1px solid #38bdf8;
+}
+
+.table-container{
+margin-top:20px;
+overflow:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:900px;
+}
+
+th{
+background:#1d4ed8;
+padding:10px;
+}
+
+td{
+padding:10px;
+border-bottom:1px solid #334155;
+text-align:center;
+}
+
+.complete{color:#22c55e}
+.pending{color:#facc15}
+.extra{color:#f97316}
+.short-status{color:#fbbf24}
+.damage-status{color:#ef4444}
+
+.total-row td{
+background:#172554;
+font-weight:bold;
+}
+
+svg{
+background:white;
+padding:4px;
+border-radius:5px;
+}
+
+.barcode-popup{
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+background:rgba(0,0,0,0.8);
+z-index:9999;
+}
+
+.popup-box{
+background:white;
+padding:20px;
+border-radius:12px;
+text-align:center;
+}
 </style>
  </head>
  <body>
@@ -55,11 +229,11 @@ svg{background:#fff;padding:4px;border-radius:5px}
    </div>
   </div>
   <div class="container">
-   <h1>N3GI INVETORY MANAGER</h1>
+   <h1>N3GI FSN BARCODE GENERATOR</h1>
    <div class="subtitle">Professional Inventory Management System</div>
    <div class="input-grid">
     <div class="card">
-     <h3>F K STOCK-IN DATA</h3>
+     <h3>FK DATA</h3>
      <textarea id="mainData"></textarea>
     </div>
     <div class="card">
@@ -88,7 +262,7 @@ svg{background:#fff;padding:4px;border-radius:5px}
     </div>
    </div>
    <div class="mode-indicator">
-    MODE : <span id="currentMode">Expected Qty</span>
+    Current Compare Mode : <span id="currentMode">Expected Qty</span>
    </div>
    <div class="summary">
     <div class="summary-card" onclick="filterTable('all');activeCard(this)">
@@ -157,6 +331,15 @@ function toggleModeMenu(){
 const m=document.getElementById('modeMenu');
 m.style.display=m.style.display==='block'?'none':'block';
 }
+document.addEventListener('click', function(e){
+
+if(!e.target.closest('.dropdown')){
+document.querySelectorAll('.dropdown-content').forEach(menu=>{
+menu.style.display='none';
+});
+}
+
+});
 
 function setMode(mode){
 compareMode=mode;
@@ -203,8 +386,7 @@ tr.setAttribute('data-type','putaway');
 tr.innerHTML=`
 <td>${index+1}</td>
 <td>${fsn}</td>
-<td>GRN DATA
-</td>
+<td>GRN DATA</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
@@ -355,15 +537,75 @@ a.click();
 }
 
 async function downloadTablePDF(){
-const { jsPDF }=window.jspdf;
-const doc=new jsPDF('l','mm','a4');
-let y=10;
-document.querySelectorAll('#tableBody tr').forEach(r=>{
-doc.text(r.innerText,10,y);
-y+=8;
-if(y>190){doc.addPage();y=10;}
-});
-doc.save('Table_Report.pdf');
+
+ const { jsPDF } = window.jspdf;
+ const doc = new jsPDF('l','mm','a4');
+
+ let body = [];
+
+ document.querySelectorAll('#tableBody tr').forEach(row=>{
+
+   const cols = row.querySelectorAll('td');
+
+   if(cols.length){
+
+     body.push([
+       cols[0].innerText,
+       cols[1].innerText,
+       cols[2].innerText,
+       cols[3].innerText,
+       cols[4].innerText,
+       cols[5].innerText,
+       cols[6].innerText,
+       cols[7].innerText,
+       cols[8].innerText
+     ]);
+
+   }
+
+ });
+
+ doc.setFontSize(14);
+ doc.text("N3GI FSN REPORT",14,12);
+
+ doc.autoTable({
+
+   startY:18,
+
+   head:[[
+     'S.No',
+     'FSN',
+     'Description',
+     'Expected',
+     'Received',
+     'Damaged',
+     'Putaway',
+     'Remaining',
+     'Status'
+   ]],
+
+   body:body,
+
+   theme:'grid',
+
+   styles:{
+     fontSize:8,
+     cellPadding:2,
+     overflow:'linebreak'
+   },
+
+   headStyles:{
+     fillColor:[29,78,216]
+   },
+
+   columnStyles:{
+     2:{cellWidth:70}
+   }
+
+ });
+
+ doc.save('Table_Report.pdf');
+
 }
 
 async function downloadReceivedQtyPDF(){
