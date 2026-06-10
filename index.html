@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>N3GI INVETORY MANAGER</title>
+  <title>N3GI FSN BARCODE GENERATOR</title>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -224,16 +224,16 @@ text-align:center;
     <svg id="popupBarcode"></svg>
     <br>
     <br>
-    <button class="download-btn" onclick="downloadBarcodeJPG()">Download</button>
+    <button class="download-btn" onclick="downloadBarcodeJPG()">Download JPG</button>
     <button class="clear-btn" onclick="closePopup()">Close</button>
    </div>
   </div>
   <div class="container">
-   <h1>N3GI INVETORY MANAGER</h1>
+   <h1>N3GI FSN BARCODE GENERATOR</h1>
    <div class="subtitle">Professional Inventory Management System</div>
    <div class="input-grid">
     <div class="card">
-     <h3>F K STOCK-IN DATA</h3>
+     <h3>FK DATA</h3>
      <textarea id="mainData"></textarea>
     </div>
     <div class="card">
@@ -262,7 +262,7 @@ text-align:center;
     </div>
    </div>
    <div class="mode-indicator">
-      Mode : <span id="currentMode">Expected Qty</span>
+    Current Compare Mode : <span id="currentMode">Expected Qty</span>
    </div>
    <div class="summary">
     <div class="summary-card" onclick="filterTable('all');activeCard(this)">
