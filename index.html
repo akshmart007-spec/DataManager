@@ -233,7 +233,7 @@ text-align:center;
    <div class="subtitle">Professional Inventory Management System</div>
    <div class="input-grid">
     <div class="card">
-     <h3>FK DATA</h3>
+     <h3>F K STOCK-IN DATA</h3>
      <textarea id="mainData"></textarea>
     </div>
     <div class="card">
@@ -385,7 +385,7 @@ const tr=document.createElement('tr');
 tr.setAttribute('data-type','putaway');
 tr.innerHTML=`
 <td>${index+1}</td>
-<td>${fsn}</td>
+<td onclick="openDirectProduct('${fsn}')"     style="cursor:pointer;color:#38bdf8;font-weight:bold;text-decoration:underline">   ${fsn} </td>
 <td>GRN DATA</td>
 <td>0</td>
 <td>0</td>
@@ -452,7 +452,7 @@ const tr=document.createElement('tr');
 tr.setAttribute('data-type',rowType);
 tr.innerHTML=`
 <td>${i}</td>
-<td>${fsn}</td>
+<td onclick="openDirectProduct('${fsn}')"     style="cursor:pointer;color:#38bdf8;font-weight:bold;text-decoration:underline">   ${fsn} </td>
 <td>${desc}</td>
 <td>${expected}</td>
 <td>${received}</td>
@@ -682,6 +682,15 @@ y+=50;
 });
 
 doc.save('Putaway_Qty.pdf');
+}
+function openDirectProduct(fsn) {
+  if (!fsn) return;
+
+  // FSN ko PID samajh ke direct product URL
+  const url = `https://www.flipkart.com/product/p/itme?pid=${encodeURIComponent(fsn)}`;
+
+  // DIRECT OPEN (no fallback, no search)
+  window.open(url, "_blank");
 }
 </script>
  </body>
