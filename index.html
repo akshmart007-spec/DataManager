@@ -224,7 +224,7 @@ text-align:center;
     <svg id="popupBarcode"></svg>
     <br>
     <br>
-    <button class="download-btn" onclick="downloadBarcodeJPG()">Download JPG</button>
+    <button class="download-btn" onclick="downloadBarcodeJPG()">Download</button>
     <button class="clear-btn" onclick="closePopup()">Close</button>
    </div>
   </div>
@@ -233,7 +233,7 @@ text-align:center;
    <div class="subtitle">Professional Inventory Management System</div>
    <div class="input-grid">
     <div class="card">
-     <h3>FK DATA</h3>
+     <h3>F K STOCK-IN DATA</h3>
      <textarea id="mainData"></textarea>
     </div>
     <div class="card">
@@ -242,6 +242,12 @@ text-align:center;
     </div>
    </div>
    <div class="button-group">
+    <input id="pidSearchInput" placeholder="Enter FSN" style="
+padding:12px;
+border:none;
+border-radius:10px;
+width:220px;">
+    <button class="mode-btn" onclick="searchPIDProduct()">Search Product</button>
     <button class="generate-btn" onclick="generateTable()">Generate Table</button>
     <button class="clear-btn" onclick="clearAll()">Clear Data</button>
     <div class="dropdown">
@@ -262,7 +268,7 @@ text-align:center;
     </div>
    </div>
    <div class="mode-indicator">
-    Current Compare Mode : <span id="currentMode">Expected Qty</span>
+    Current Mode : <span id="currentMode">Expected Qty</span>
    </div>
    <div class="summary">
     <div class="summary-card" onclick="filterTable('all');activeCard(this)">
@@ -385,7 +391,7 @@ const tr=document.createElement('tr');
 tr.setAttribute('data-type','putaway');
 tr.innerHTML=`
 <td>${index+1}</td>
-<td>${fsn}</td>
+<td onclick="openDirectProduct('${fsn}')"     style="cursor:pointer;color:#38bdf8;font-weight:bold;text-decoration:underline">   ${fsn} </td>
 <td>GRN DATA</td>
 <td>0</td>
 <td>0</td>
@@ -452,7 +458,7 @@ const tr=document.createElement('tr');
 tr.setAttribute('data-type',rowType);
 tr.innerHTML=`
 <td>${i}</td>
-<td>${fsn}</td>
+<td onclick="openDirectProduct('${fsn}')"     style="cursor:pointer;color:#38bdf8;font-weight:bold;text-decoration:underline">   ${fsn} </td>
 <td>${desc}</td>
 <td>${expected}</td>
 <td>${received}</td>
@@ -532,7 +538,7 @@ csv.push(cols.join(','));
 const blob=new Blob([csv.join('\n')],{type:'text/csv'});
 const a=document.createElement('a');
 a.href=URL.createObjectURL(blob);
-a.download='N3GI_Result.csv';
+a.download='N3GI INVETORY MANAGER_Result.csv';
 a.click();
 }
 
@@ -566,7 +572,7 @@ async function downloadTablePDF(){
  });
 
  doc.setFontSize(14);
- doc.text("N3GI FSN REPORT",14,12);
+ doc.text("N3GI INVETORY MANAGER",14,12);
 
  doc.autoTable({
 
@@ -682,6 +688,33 @@ y+=50;
 });
 
 doc.save('Putaway_Qty.pdf');
+}
+function openDirectProduct(fsn) {
+  if (!fsn) return;
+
+  // FSN ko PID samajh ke direct product URL
+  const url = `https://www.flipkart.com/product/p/itme?pid=${encodeURIComponent(fsn)}`;
+
+  // DIRECT OPEN (no fallback, no search)
+  window.open(url, "_blank");
+}
+function searchPIDProduct(){
+
+  let pid =
+  document.getElementById("pidSearchInput").value.trim();
+
+  if(!pid){
+    alert("ENTER FSN");
+    return;
+  }
+
+  let base =
+  "https://www.flipkart.com/amul-gold-milk/p/itm17e9a5aa94a16?pid=";
+
+  let url = base + pid;
+
+  window.open(url,"_blank");
+
 }
 </script>
  </body>
