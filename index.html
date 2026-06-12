@@ -216,6 +216,14 @@ padding:20px;
 border-radius:12px;
 text-align:center;
 }
+   /* Selected Row Highlight */
+#resultTable tbody tr.selected-row{
+    background: rgba(255,255,255,0.12) !important;
+}
+
+#resultTable tbody tr{
+    cursor:pointer;
+}
 </style>
  </head>
  <body>
@@ -716,6 +724,20 @@ function searchPIDProduct(){
   window.open(url,"_blank");
 
 }
+   // Row Highlight On Click
+document.addEventListener("click", function(e){
+
+  let row = e.target.closest("#resultTable tbody tr");
+
+  if(!row) return;
+
+  document.querySelectorAll("#resultTable tbody tr").forEach(r=>{
+    r.classList.remove("selected-row");
+  });
+
+  row.classList.add("selected-row");
+
+});
 </script>
  </body>
 </html>
